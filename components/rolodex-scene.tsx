@@ -18,12 +18,12 @@ type SceneCard = {
   baseAngle: number;
 };
 
-const ITEM_MULTIPLIER = 11;
+const ITEM_MULTIPLIER = 3;
 const FULL_ROTATION = Math.PI * 2;
 const BASE_CARD_WIDTH = 120;
 const BASE_CARD_HEIGHT = 90;
-const RING_TILT_X = -0.74;
-const RING_TILT_Z = 0.16;
+const RING_TILT_X = 0.1;
+const RING_TILT_Z = 0;
 const MAX_PIXEL_RATIO = 1.25;
 const ROTATION_EPSILON = 0.0002;
 const LIFT_EPSILON = 0.08;
@@ -163,7 +163,7 @@ export default function RolodexScene() {
       interaction.baseCameraY = getClamp(minSide * 0.6, 260, 540);
       interaction.baseCameraZ = getClamp(minSide * 0.98, 470, 900);
       interaction.baseLookAtY = getClamp(minSide * 0.09, 26, 48);
-      interaction.groupY = getClamp(minSide * -0.11, -72, -36);
+      interaction.groupY = getClamp(minSide * 0.01, -6, 14);
 
       camera.fov = width < 640 ? 54 : width < 1024 ? 50 : 46;
       camera.aspect = width / height;
