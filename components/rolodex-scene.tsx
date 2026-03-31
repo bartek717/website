@@ -46,7 +46,8 @@ const ROTATION_EPSILON = 0.0002;
 const LIFT_EPSILON = 0.08;
 const SCALE_EPSILON = 0.0008;
 const CAMERA_EPSILON = 0.12;
-const MODAL_CLOSE_MS = 320;
+const MODAL_TRANSITION_MS = 420;
+const REDUCED_MODAL_MS = 180;
 
 const SCENE_ITEMS: SceneItem[] = Array.from({ length: ITEM_MULTIPLIER }, (_, repetition) =>
   ROLEDEX_ITEMS.map((item, baseIndex) => ({
@@ -92,20 +93,26 @@ function getModalTargetRect(): ScreenRect {
 }
 
 function getModalStyle(fromRect: ScreenRect, toRect: ScreenRect): CSSProperties {
+  const translateX = fromRect.left - toRect.left;
+  const translateY = fromRect.top - toRect.top;
+  const scaleX = fromRect.width / toRect.width;
+  const scaleY = fromRect.height / toRect.height;
+
   return {
-    ["--modal-from-left" as const]: `${fromRect.left}px`,
-    ["--modal-from-top" as const]: `${fromRect.top}px`,
-    ["--modal-from-width" as const]: `${fromRect.width}px`,
-    ["--modal-from-height" as const]: `${fromRect.height}px`,
-    ["--modal-to-left" as const]: `${toRect.left}px`,
-    ["--modal-to-top" as const]: `${toRect.top}px`,
-    ["--modal-to-width" as const]: `${toRect.width}px`,
-    ["--modal-to-height" as const]: `${toRect.height}px`,
+    ["--modal-left" as const]: `${toRect.left}px`,
+    ["--modal-top" as const]: `${toRect.top}px`,
+    ["--modal-width" as const]: `${toRect.width}px`,
+    ["--modal-height" as const]: `${toRect.height}px`,
+    ["--modal-translate-x" as const]: `${translateX}px`,
+    ["--modal-translate-y" as const]: `${translateY}px`,
+    ["--modal-scale-x" as const]: `${scaleX}`,
+    ["--modal-scale-y" as const]: `${scaleY}`,
   } as CSSProperties;
 }
 
 export default function RolodexScene() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const modalCardRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
@@ -174,6 +181,31 @@ export default function RolodexScene() {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab" && modalCardRef.current) {
+        const focusableElements = Array.from(
+          modalCardRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+          ),
+        ).filter((element) => !element.hasAttribute("disabled"));
+
+        if (focusableElements.length > 0) {
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (event.shiftKey && document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus();
+            return;
+          }
+
+          if (!event.shiftKey && document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement.focus();
+            return;
+          }
+        }
+      }
+
       if (event.key !== "Escape") {
         return;
       }
@@ -193,7 +225,7 @@ export default function RolodexScene() {
         setModalTargetRect(null);
         previousFocusRef.current?.focus();
         previousFocusRef.current = null;
-      }, prefersReducedMotion ? 180 : MODAL_CLOSE_MS);
+      }, prefersReducedMotion ? REDUCED_MODAL_MS : MODAL_TRANSITION_MS);
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -227,7 +259,7 @@ export default function RolodexScene() {
       setModalTargetRect(null);
       previousFocusRef.current?.focus();
       previousFocusRef.current = null;
-    }, prefersReducedMotion ? 180 : MODAL_CLOSE_MS);
+    }, prefersReducedMotion ? REDUCED_MODAL_MS : MODAL_TRANSITION_MS);
   };
 
   const openModalFromCard = useEffectEvent((card: SceneCard, sourceRect: ScreenRect) => {
@@ -863,6 +895,7 @@ export default function RolodexScene() {
             className={`${styles.modalCard} ${
               modalExpanded ? styles.modalCardExpanded : ""
             } ${prefersReducedMotion ? styles.modalCardReducedMotion : ""}`}
+            ref={modalCardRef}
             role="dialog"
             style={modalStyle}
           >
