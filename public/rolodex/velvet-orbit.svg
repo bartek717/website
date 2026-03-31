@@ -1,0 +1,15 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="velvet-bg" x1="100" y1="84" x2="1084" y2="812" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#170F14"/>
+      <stop offset="0.54" stop-color="#5E1831"/>
+      <stop offset="1" stop-color="#E7719E"/>
+    </linearGradient>
+  </defs>
+  <rect x="36" y="36" width="1128" height="828" rx="88" fill="url(#velvet-bg)"/>
+  <circle cx="600" cy="450" r="242" stroke="#FFC8DB" stroke-width="18" opacity="0.78"/>
+  <circle cx="600" cy="450" r="164" stroke="#33121D" stroke-width="66" opacity="0.64"/>
+  <circle cx="600" cy="450" r="70" fill="#FFD6E3"/>
+  <path d="M294 188C380 148 486 126 600 126C818 126 1006 206 1094 322" stroke="#FFC8DB" stroke-width="14" stroke-linecap="round" opacity="0.42"/>
+  <path d="M132 612C258 722 416 776 600 776C776 776 934 724 1060 616" stroke="#FFC8DB" stroke-width="14" stroke-linecap="round" opacity="0.28"/>
+</svg>

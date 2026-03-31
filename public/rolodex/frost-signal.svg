@@ -1,0 +1,18 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="frost-bg" x1="84" y1="92" x2="1098" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F6FA"/>
+      <stop offset="0.52" stop-color="#D8E3F7"/>
+      <stop offset="1" stop-color="#7AA7E1"/>
+    </linearGradient>
+  </defs>
+  <rect x="36" y="36" width="1128" height="828" rx="88" fill="url(#frost-bg)"/>
+  <path d="M144 690L436 342L714 606L1038 214" stroke="#10283B" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M144 690L436 342L714 606L1038 214" stroke="#FCFDFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.82"/>
+  <circle cx="436" cy="342" r="54" fill="#10283B"/>
+  <circle cx="714" cy="606" r="54" fill="#10283B"/>
+  <circle cx="1038" cy="214" r="54" fill="#10283B"/>
+  <circle cx="436" cy="342" r="18" fill="#F7FBFF"/>
+  <circle cx="714" cy="606" r="18" fill="#F7FBFF"/>
+  <circle cx="1038" cy="214" r="18" fill="#F7FBFF"/>
+</svg>

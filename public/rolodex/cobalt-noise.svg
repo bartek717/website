@@ -1,0 +1,19 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cobalt-bg" x1="76" y1="92" x2="1096" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08172E"/>
+      <stop offset="0.5" stop-color="#144C9A"/>
+      <stop offset="1" stop-color="#56C8FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="36" y="36" width="1128" height="828" rx="88" fill="url(#cobalt-bg)"/>
+  <g opacity="0.8">
+    <path d="M162 676L336 518L472 606L660 380L850 508L1032 252" stroke="#D6F6FF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M186 734L344 598L488 664L676 462L864 572L1022 402" stroke="#08172E" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g fill="#D6F6FF" opacity="0.9">
+    <circle cx="336" cy="518" r="22"/>
+    <circle cx="660" cy="380" r="22"/>
+    <circle cx="1032" cy="252" r="22"/>
+  </g>
+</svg>

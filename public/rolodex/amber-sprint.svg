@@ -1,0 +1,22 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="amber-bg" x1="96" y1="88" x2="1070" y2="812" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2B1706"/>
+      <stop offset="0.48" stop-color="#C77B19"/>
+      <stop offset="1" stop-color="#F5C55A"/>
+    </linearGradient>
+    <radialGradient id="amber-glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(868 336) rotate(90) scale(176)">
+      <stop stop-color="#FFF9E3"/>
+      <stop offset="0.58" stop-color="#CBCFD8"/>
+      <stop offset="1" stop-color="#47515D"/>
+    </radialGradient>
+  </defs>
+  <rect x="36" y="36" width="1128" height="828" rx="88" fill="url(#amber-bg)"/>
+  <path d="M46 698C186 466 366 334 586 302C738 280 900 294 1082 344L1164 864H36L46 698Z" fill="#26150A"/>
+  <path d="M102 754C194 548 352 424 574 388C712 366 882 376 1072 430L1122 864H96L102 754Z" fill="#E5A438"/>
+  <path d="M98 754C210 574 356 476 566 432C744 396 894 430 1100 494L1120 864H128L98 754Z" fill="#F2C75E"/>
+  <circle cx="858" cy="336" r="132" fill="url(#amber-glow)"/>
+  <circle cx="858" cy="336" r="86" stroke="#F6F8FB" stroke-width="22"/>
+  <circle cx="858" cy="336" r="34" fill="#7D8894"/>
+  <path d="M888 216L1062 108" stroke="#FFF1C0" stroke-width="14" stroke-linecap="round" opacity="0.5"/>
+</svg>

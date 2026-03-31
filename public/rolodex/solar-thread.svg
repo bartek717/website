@@ -1,0 +1,15 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="solar-bg" x1="96" y1="76" x2="1078" y2="814" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#291A05"/>
+      <stop offset="0.5" stop-color="#A55A08"/>
+      <stop offset="1" stop-color="#F8E68B"/>
+    </linearGradient>
+  </defs>
+  <rect x="36" y="36" width="1128" height="828" rx="88" fill="url(#solar-bg)"/>
+  <circle cx="858" cy="252" r="154" fill="#FFF6D6" fill-opacity="0.92"/>
+  <circle cx="858" cy="252" r="224" stroke="#FFE27D" stroke-width="2" opacity="0.42"/>
+  <circle cx="858" cy="252" r="284" stroke="#FFE27D" stroke-width="2" opacity="0.18"/>
+  <path d="M136 788C248 660 370 586 500 568C636 550 768 580 918 654C982 686 1038 714 1088 730V864H136V788Z" fill="#3D2207"/>
+  <path d="M186 814C304 710 418 650 528 642C670 632 814 684 976 768C1008 784 1048 800 1096 816V864H186V814Z" fill="#EBAF3A" opacity="0.45"/>
+</svg>

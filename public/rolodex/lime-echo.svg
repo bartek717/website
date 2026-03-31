@@ -1,0 +1,18 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lime-bg" x1="86" y1="90" x2="1102" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#112008"/>
+      <stop offset="0.5" stop-color="#628B0D"/>
+      <stop offset="1" stop-color="#D7F58C"/>
+    </linearGradient>
+  </defs>
+  <rect x="36" y="36" width="1128" height="828" rx="88" fill="url(#lime-bg)"/>
+  <path d="M142 258C274 184 432 146 620 146C812 146 956 196 1056 296" stroke="#F5FFD0" stroke-width="16" stroke-linecap="round" opacity="0.5"/>
+  <path d="M138 690C304 554 482 486 664 486C830 486 964 536 1062 632" stroke="#F5FFD0" stroke-width="16" stroke-linecap="round" opacity="0.32"/>
+  <g opacity="0.92">
+    <rect x="202" y="266" width="194" height="194" rx="42" fill="#0A1205"/>
+    <rect x="502" y="212" width="252" height="252" rx="56" fill="#ECFFB1" fill-opacity="0.88"/>
+    <rect x="846" y="344" width="128" height="128" rx="32" fill="#0A1205"/>
+    <rect x="354" y="546" width="128" height="128" rx="32" fill="#ECFFB1" fill-opacity="0.88"/>
+  </g>
+</svg>

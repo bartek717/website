@@ -1,0 +1,150 @@
+.main {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.backdrop {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.glowWarm,
+.glowCool {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(96px);
+}
+
+.glowWarm {
+  left: 8%;
+  top: 10%;
+  width: 18rem;
+  height: 18rem;
+  background: rgb(242 209 117 / 0.2);
+}
+
+.glowCool {
+  right: 9%;
+  bottom: 12%;
+  width: 24rem;
+  height: 24rem;
+  background: rgb(103 180 255 / 0.12);
+}
+
+.viewport {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.ready {
+  opacity: 1;
+}
+
+.preview {
+  pointer-events: none;
+  position: fixed;
+  z-index: 20;
+  top: max(env(safe-area-inset-top), 1rem);
+  left: max(env(safe-area-inset-left), 1rem);
+  width: min(15rem, calc(100vw - 2rem));
+  padding: 0.75rem;
+  border: 1px solid rgb(0 0 0 / 0.06);
+  border-radius: 1.6rem;
+  background: rgb(255 255 255 / 0.88);
+  box-shadow: 0 24px 80px rgb(18 16 12 / 0.12);
+  backdrop-filter: blur(24px);
+}
+
+.previewImageFrame {
+  overflow: hidden;
+  border-radius: 1.2rem;
+  background: #ece8de;
+}
+
+.previewImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.previewTitle {
+  margin: 0.75rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgb(0 0 0 / 0.4);
+}
+
+.pill {
+  pointer-events: none;
+  position: fixed;
+  z-index: 30;
+  top: max(env(safe-area-inset-top), 1rem);
+  left: 50%;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.7);
+  box-shadow: 0 14px 40px rgb(0 0 0 / 0.18);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  backdrop-filter: blur(24px);
+}
+
+.helperWrap {
+  pointer-events: none;
+  position: fixed;
+  inset-inline: 0;
+  bottom: max(env(safe-area-inset-bottom), 1rem);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  padding-inline: 1rem;
+}
+
+.helper {
+  max-width: 24rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(0 0 0 / 0.05);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.72);
+  color: rgb(0 0 0 / 0.35);
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-align: center;
+  text-transform: uppercase;
+  backdrop-filter: blur(16px);
+}
+
+@media (width >= 40rem) {
+  .preview {
+    width: 15rem;
+    padding: 1rem;
+  }
+}
+
+@media (width <= 48rem) {
+  .glowWarm {
+    width: 14rem;
+    height: 14rem;
+  }
+
+  .glowCool {
+    width: 18rem;
+    height: 18rem;
+  }
+}
