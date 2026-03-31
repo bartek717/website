@@ -11,7 +11,7 @@
       <stop offset="1" stop-color="#7A4AA8" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <rect x="36" y="36" width="1128" height="828" rx="88" fill="url(#veil-bg)"/>
+  <rect x="36" y="36" width="1128" height="828" rx="18" fill="url(#veil-bg)"/>
   <circle cx="844" cy="234" r="222" fill="url(#veil-flare)"/>
   <path d="M0 666C126 550 260 494 402 498C610 502 760 648 948 648C1046 648 1118 624 1200 582V900H0V666Z" fill="#28173C" opacity="0.86"/>
   <path d="M0 724C164 620 316 578 456 592C624 610 772 718 936 718C1032 718 1114 688 1200 632V900H0V724Z" fill="#FBAD79" fill-opacity="0.26"/>
