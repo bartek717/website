@@ -59,6 +59,9 @@
   background: rgb(255 255 255 / 0.88);
   box-shadow: 0 24px 80px rgb(18 16 12 / 0.12);
   backdrop-filter: blur(24px);
+  transition:
+    opacity 220ms ease,
+    transform 320ms ease;
 }
 
 .previewImageFrame {
@@ -103,6 +106,9 @@
   text-transform: uppercase;
   transform: translateX(-50%);
   backdrop-filter: blur(24px);
+  transition:
+    opacity 220ms ease,
+    transform 320ms ease;
 }
 
 .helperWrap {
@@ -114,6 +120,9 @@
   display: flex;
   justify-content: center;
   padding-inline: 1rem;
+  transition:
+    opacity 220ms ease,
+    transform 320ms ease;
 }
 
 .helper {
@@ -128,6 +137,206 @@
   text-align: center;
   text-transform: uppercase;
   backdrop-filter: blur(16px);
+}
+
+.chromeMuted {
+  opacity: 0;
+}
+
+.modalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.modalBackdropButton {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(247 244 236 / 0);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: auto;
+  transition:
+    opacity 280ms ease,
+    background-color 320ms ease,
+    backdrop-filter 320ms ease;
+}
+
+.modalBackdropButtonVisible {
+  opacity: 1;
+  background: rgb(247 244 236 / 0.42);
+  backdrop-filter: blur(10px);
+}
+
+.modalCard {
+  position: fixed;
+  left: var(--modal-from-left);
+  top: var(--modal-from-top);
+  width: var(--modal-from-width);
+  height: var(--modal-from-height);
+  overflow: hidden;
+  border: 1px solid rgb(18 16 12 / 0.08);
+  border-radius: 0.8rem;
+  background: rgb(255 255 255 / 0.92);
+  box-shadow: 0 14px 36px rgb(18 16 12 / 0.14);
+  pointer-events: auto;
+  transition:
+    left 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    top 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease,
+    transform 220ms ease;
+  will-change:
+    left,
+    top,
+    width,
+    height,
+    border-radius,
+    box-shadow;
+}
+
+.modalCardExpanded {
+  left: var(--modal-to-left);
+  top: var(--modal-to-top);
+  width: var(--modal-to-width);
+  height: var(--modal-to-height);
+  border-radius: 1.75rem;
+  background: rgb(255 255 255 / 0.98);
+  box-shadow: 0 44px 120px rgb(18 16 12 / 0.22);
+}
+
+.modalCardReducedMotion {
+  left: var(--modal-to-left);
+  top: var(--modal-to-top);
+  width: var(--modal-to-width);
+  height: var(--modal-to-height);
+  opacity: 0;
+  transform: translateY(14px) scale(0.975);
+}
+
+.modalCardReducedMotion.modalCardExpanded {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.modalMedia {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  height: 100%;
+  background: #ece8de;
+  transition:
+    height 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modalMediaExpanded {
+  height: calc(var(--modal-to-height) * 0.56);
+  border-radius: 0 0 1.4rem 1.4rem;
+  filter: saturate(1.02) contrast(1.02);
+}
+
+.modalImage {
+  object-fit: cover;
+}
+
+.modalBody {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.3rem 1.35rem 1.45rem;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition:
+    opacity 220ms ease 80ms,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1) 80ms;
+}
+
+.modalBodyVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.modalEyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(18 16 12 / 0.42);
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: clamp(1.6rem, 2vw, 2.3rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  color: rgb(18 16 12 / 0.96);
+}
+
+.modalDescription {
+  margin: 0;
+  max-width: 32rem;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: rgb(18 16 12 / 0.7);
+}
+
+.modalAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-width: 8.5rem;
+  padding: 0.78rem 1.1rem;
+  border-radius: 999px;
+  background: rgb(18 16 12 / 0.92);
+  color: white;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.modalClose {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 2;
+  padding: 0.55rem 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(18 16 12 / 0.72);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  opacity: 0;
+  text-transform: uppercase;
+  transform: translateY(-10px);
+  transition:
+    opacity 200ms ease 90ms,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1) 90ms;
+}
+
+.modalCloseVisible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @media (width >= 40rem) {
@@ -146,5 +355,18 @@
   .glowCool {
     width: 18rem;
     height: 18rem;
+  }
+
+  .modalBody {
+    padding: 1.1rem 1.05rem 1.15rem;
+  }
+
+  .modalTitle {
+    font-size: 1.45rem;
+  }
+
+  .modalDescription {
+    font-size: 0.92rem;
+    line-height: 1.55;
   }
 }

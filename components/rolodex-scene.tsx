@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { startTransition, useEffect, useEffectEvent, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  startTransition,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react";
 import * as THREE from "three";
 
 import { ROLEDEX_ITEMS, type RolodexItem } from "@/components/rolodex-data";
@@ -18,6 +25,15 @@ type SceneCard = {
   baseAngle: number;
 };
 
+type ScreenRect = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+type ModalPhase = "closed" | "opening" | "open" | "closing";
+
 const ITEM_MULTIPLIER = 3;
 const ITEM_DENSITY = 0.6;
 const FULL_ROTATION = Math.PI * 2;
@@ -30,6 +46,7 @@ const ROTATION_EPSILON = 0.0002;
 const LIFT_EPSILON = 0.08;
 const SCALE_EPSILON = 0.0008;
 const CAMERA_EPSILON = 0.12;
+const MODAL_CLOSE_MS = 320;
 
 const SCENE_ITEMS: SceneItem[] = Array.from({ length: ITEM_MULTIPLIER }, (_, repetition) =>
   ROLEDEX_ITEMS.map((item, baseIndex) => ({
@@ -54,17 +71,189 @@ function getPreviewItem(index: number) {
   return ROLEDEX_ITEMS[index] ?? ROLEDEX_ITEMS[0];
 }
 
+function getModalTargetRect(): ScreenRect {
+  const horizontalPadding = window.innerWidth < 640 ? 16 : 28;
+  const verticalPadding = window.innerHeight < 700 ? 16 : 24;
+  const width = Math.min(
+    window.innerWidth - horizontalPadding * 2,
+    window.innerWidth < 768 ? 420 : 620,
+  );
+  const height = Math.min(
+    window.innerHeight - verticalPadding * 2,
+    Math.max(440, width * 1.08),
+  );
+
+  return {
+    left: Math.round((window.innerWidth - width) / 2),
+    top: Math.round((window.innerHeight - height) / 2),
+    width: Math.round(width),
+    height: Math.round(height),
+  };
+}
+
+function getModalStyle(fromRect: ScreenRect, toRect: ScreenRect): CSSProperties {
+  return {
+    ["--modal-from-left" as const]: `${fromRect.left}px`,
+    ["--modal-from-top" as const]: `${fromRect.top}px`,
+    ["--modal-from-width" as const]: `${fromRect.width}px`,
+    ["--modal-from-height" as const]: `${fromRect.height}px`,
+    ["--modal-to-left" as const]: `${toRect.left}px`,
+    ["--modal-to-top" as const]: `${toRect.top}px`,
+    ["--modal-to-width" as const]: `${toRect.width}px`,
+    ["--modal-to-height" as const]: `${toRect.height}px`,
+  } as CSSProperties;
+}
+
 export default function RolodexScene() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
+  const openFrameRef = useRef<number | null>(null);
+  const modalPhaseRef = useRef<ModalPhase>("closed");
   const [activeBaseIndex, setActiveBaseIndex] = useState(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [selectedBaseIndex, setSelectedBaseIndex] = useState<number | null>(null);
+  const [modalPhase, setModalPhase] = useState<ModalPhase>("closed");
+  const [modalSourceRect, setModalSourceRect] = useState<ScreenRect | null>(null);
+  const [modalTargetRect, setModalTargetRect] = useState<ScreenRect | null>(null);
 
   const setPreviewIndex = useEffectEvent((nextBaseIndex: number) => {
     startTransition(() => {
       setActiveBaseIndex((currentIndex) =>
         currentIndex === nextBaseIndex ? currentIndex : nextBaseIndex,
       );
+    });
+  });
+
+  useEffect(() => {
+    modalPhaseRef.current = modalPhase;
+  }, [modalPhase]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+
+      if (openFrameRef.current !== null) {
+        window.cancelAnimationFrame(openFrameRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (modalPhase !== "open") {
+      return;
+    }
+
+    closeButtonRef.current?.focus();
+  }, [modalPhase]);
+
+  useEffect(() => {
+    if (modalPhase === "closed" || selectedBaseIndex === null) {
+      return;
+    }
+
+    const updateTargetRect = () => {
+      setModalTargetRect(getModalTargetRect());
+    };
+
+    updateTargetRect();
+    window.addEventListener("resize", updateTargetRect);
+
+    return () => {
+      window.removeEventListener("resize", updateTargetRect);
+    };
+  }, [modalPhase, selectedBaseIndex]);
+
+  useEffect(() => {
+    if (modalPhase === "closed") {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+
+      setModalPhase("closing");
+      closeTimeoutRef.current = window.setTimeout(() => {
+        closeTimeoutRef.current = null;
+        setModalPhase("closed");
+        setSelectedBaseIndex(null);
+        setModalSourceRect(null);
+        setModalTargetRect(null);
+        previousFocusRef.current?.focus();
+        previousFocusRef.current = null;
+      }, prefersReducedMotion ? 180 : MODAL_CLOSE_MS);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [modalPhase, prefersReducedMotion]);
+
+  const requestCloseModal = () => {
+    if (modalPhaseRef.current === "closed" || modalPhaseRef.current === "closing") {
+      return;
+    }
+
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+    }
+
+    if (openFrameRef.current !== null) {
+      window.cancelAnimationFrame(openFrameRef.current);
+      openFrameRef.current = null;
+    }
+
+    setModalPhase("closing");
+
+    closeTimeoutRef.current = window.setTimeout(() => {
+      closeTimeoutRef.current = null;
+      setModalPhase("closed");
+      setSelectedBaseIndex(null);
+      setModalSourceRect(null);
+      setModalTargetRect(null);
+      previousFocusRef.current?.focus();
+      previousFocusRef.current = null;
+    }, prefersReducedMotion ? 180 : MODAL_CLOSE_MS);
+  };
+
+  const openModalFromCard = useEffectEvent((card: SceneCard, sourceRect: ScreenRect) => {
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+
+    if (openFrameRef.current !== null) {
+      window.cancelAnimationFrame(openFrameRef.current);
+    }
+
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    setPreviewIndex(card.item.baseIndex);
+    setSelectedBaseIndex(card.item.baseIndex);
+    setModalSourceRect(sourceRect);
+    setModalTargetRect(getModalTargetRect());
+    setModalPhase("opening");
+
+    openFrameRef.current = window.requestAnimationFrame(() => {
+      openFrameRef.current = window.requestAnimationFrame(() => {
+        setModalPhase("open");
+        openFrameRef.current = null;
+      });
     });
   });
 
@@ -101,6 +290,13 @@ export default function RolodexScene() {
     const pointer = new THREE.Vector2(2, 2);
     const raycaster = new THREE.Raycaster();
     const scratchScale = new THREE.Vector3();
+    const projectedCorner = new THREE.Vector3();
+    const cardCorners = [
+      new THREE.Vector3(-BASE_CARD_WIDTH / 2, -BASE_CARD_HEIGHT / 2, 0),
+      new THREE.Vector3(BASE_CARD_WIDTH / 2, -BASE_CARD_HEIGHT / 2, 0),
+      new THREE.Vector3(BASE_CARD_WIDTH / 2, BASE_CARD_HEIGHT / 2, 0),
+      new THREE.Vector3(-BASE_CARD_WIDTH / 2, BASE_CARD_HEIGHT / 2, 0),
+    ];
 
     const interaction = {
       activePointerId: -1,
@@ -191,8 +387,66 @@ export default function RolodexScene() {
       requestRender();
     };
 
+    const pickCardAtPointer = () => {
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(cardMeshes, false);
+
+      if (hits.length === 0) {
+        return null;
+      }
+
+      const ringIndex = hits[0].object.userData.ringIndex as number;
+      return cards[ringIndex] ?? null;
+    };
+
+    const getCardScreenRect = (card: SceneCard): ScreenRect | null => {
+      const bounds = renderer.domElement.getBoundingClientRect();
+
+      if (bounds.width === 0 || bounds.height === 0) {
+        return null;
+      }
+
+      scene.updateMatrixWorld(true);
+      camera.updateMatrixWorld();
+
+      let minX = Number.POSITIVE_INFINITY;
+      let maxX = Number.NEGATIVE_INFINITY;
+      let minY = Number.POSITIVE_INFINITY;
+      let maxY = Number.NEGATIVE_INFINITY;
+
+      for (const corner of cardCorners) {
+        projectedCorner.copy(corner).applyMatrix4(card.mesh.matrixWorld).project(camera);
+
+        const x = bounds.left + ((projectedCorner.x + 1) * 0.5) * bounds.width;
+        const y = bounds.top + ((1 - (projectedCorner.y + 1) * 0.5) * bounds.height);
+
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+
+      const width = Math.max(96, maxX - minX);
+      const height = Math.max(72, maxY - minY);
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      return {
+        left: centerX - width / 2,
+        top: centerY - height / 2,
+        width,
+        height,
+      };
+    };
+
     const syncHover = () => {
       const previousHover = interaction.hoveredRingIndex;
+
+      if (modalPhaseRef.current !== "closed") {
+        interaction.hoveredRingIndex = null;
+        hoverDirty = false;
+        return previousHover !== null;
+      }
 
       if (!interaction.pointerInside || interaction.pointerType !== "mouse") {
         interaction.hoveredRingIndex = null;
@@ -200,11 +454,8 @@ export default function RolodexScene() {
         return previousHover !== null;
       }
 
-      raycaster.setFromCamera(pointer, camera);
-      const hits = raycaster.intersectObjects(cardMeshes, false);
-
-      interaction.hoveredRingIndex =
-        hits.length > 0 ? (hits[0].object.userData.ringIndex as number) : null;
+      const hoveredCard = pickCardAtPointer();
+      interaction.hoveredRingIndex = hoveredCard ? hoveredCard.mesh.userData.ringIndex : null;
 
       hoverDirty = false;
       return previousHover !== interaction.hoveredRingIndex;
@@ -226,6 +477,10 @@ export default function RolodexScene() {
     };
 
     const handleWheel = (event: WheelEvent) => {
+      if (modalPhaseRef.current !== "closed") {
+        return;
+      }
+
       event.preventDefault();
 
       interaction.targetRotation +=
@@ -235,6 +490,10 @@ export default function RolodexScene() {
     };
 
     const handlePointerDown = (event: PointerEvent) => {
+      if (modalPhaseRef.current !== "closed") {
+        return;
+      }
+
       interaction.activePointerId = event.pointerId;
       interaction.dragging = true;
       interaction.dragMoved = false;
@@ -251,6 +510,10 @@ export default function RolodexScene() {
     };
 
     const handlePointerMove = (event: PointerEvent) => {
+      if (modalPhaseRef.current !== "closed") {
+        return;
+      }
+
       interaction.pointerInside = true;
       interaction.pointerType = event.pointerType;
       setPointerFromEvent(event);
@@ -273,11 +536,14 @@ export default function RolodexScene() {
         return;
       }
 
-      const hoveredCard =
-        interaction.hoveredRingIndex !== null ? cards[interaction.hoveredRingIndex] : null;
+      const clickedCard = !interaction.dragMoved ? pickCardAtPointer() : null;
 
-      if (!interaction.dragMoved && hoveredCard?.item.href) {
-        window.open(hoveredCard.item.href, "_self");
+      if (clickedCard) {
+        const sourceRect = getCardScreenRect(clickedCard);
+
+        if (sourceRect) {
+          openModalFromCard(clickedCard, sourceRect);
+        }
       }
 
       interaction.activePointerId = -1;
@@ -294,6 +560,10 @@ export default function RolodexScene() {
     };
 
     const handlePointerLeave = () => {
+      if (modalPhaseRef.current !== "closed") {
+        return;
+      }
+
       interaction.pointerInside = false;
       interaction.hoveredRingIndex = null;
       interaction.pointerX = 0;
@@ -530,6 +800,19 @@ export default function RolodexScene() {
   }, [prefersReducedMotion]);
 
   const activeItem = getPreviewItem(activeBaseIndex);
+  const selectedItem =
+    selectedBaseIndex !== null ? ROLEDEX_ITEMS[selectedBaseIndex] ?? null : null;
+  const modalMounted =
+    selectedItem !== null && modalSourceRect !== null && modalTargetRect !== null;
+  const modalExpanded = modalPhase === "open";
+  const modalVisible = modalPhase !== "closed";
+  const modalStyle =
+    modalMounted && modalSourceRect && modalTargetRect
+      ? getModalStyle(
+          prefersReducedMotion ? modalTargetRect : modalSourceRect,
+          modalTargetRect,
+        )
+      : undefined;
 
   return (
     <main className={styles.main}>
@@ -540,11 +823,12 @@ export default function RolodexScene() {
 
       <div className={`${styles.viewport} ${isReady ? styles.ready : ""}`} ref={containerRef} />
 
-      <div className={styles.preview}>
+      <div className={`${styles.preview} ${modalVisible ? styles.chromeMuted : ""}`}>
         <div className={styles.previewImageFrame}>
           <Image
             alt={activeItem.title}
             className={styles.previewImage}
+            priority
             src={activeItem.src}
             width={240}
             height={180}
@@ -554,11 +838,83 @@ export default function RolodexScene() {
         <p className={styles.previewTitle}>{activeItem.title}</p>
       </div>
 
-      <div className={styles.pill}>Scroll</div>
+      <div className={`${styles.pill} ${modalVisible ? styles.chromeMuted : ""}`}>Scroll</div>
 
-      <div className={styles.helperWrap}>
+      <div className={`${styles.helperWrap} ${modalVisible ? styles.chromeMuted : ""}`}>
         <div className={styles.helper}>Wheel, drag, and swipe</div>
       </div>
+
+      {modalMounted && selectedItem ? (
+        <div className={styles.modalRoot}>
+          <button
+            aria-label="Close details"
+            className={`${styles.modalBackdropButton} ${
+              modalExpanded ? styles.modalBackdropButtonVisible : ""
+            }`}
+            onClick={requestCloseModal}
+            tabIndex={-1}
+            type="button"
+          />
+
+          <section
+            aria-describedby={`modal-description-${selectedItem.id}`}
+            aria-labelledby={`modal-title-${selectedItem.id}`}
+            aria-modal="true"
+            className={`${styles.modalCard} ${
+              modalExpanded ? styles.modalCardExpanded : ""
+            } ${prefersReducedMotion ? styles.modalCardReducedMotion : ""}`}
+            role="dialog"
+            style={modalStyle}
+          >
+            <button
+              aria-label="Close details"
+              className={`${styles.modalClose} ${
+                modalExpanded ? styles.modalCloseVisible : ""
+              }`}
+              onClick={requestCloseModal}
+              ref={closeButtonRef}
+              type="button"
+            >
+              Close
+            </button>
+
+            <div
+              className={`${styles.modalMedia} ${
+                modalExpanded ? styles.modalMediaExpanded : ""
+              }`}
+            >
+              <Image
+                alt={selectedItem.title}
+                className={styles.modalImage}
+                fill
+                loading="eager"
+                sizes="(max-width: 767px) calc(100vw - 32px), 620px"
+                src={selectedItem.src}
+              />
+            </div>
+
+            <div
+              className={`${styles.modalBody} ${
+                modalExpanded ? styles.modalBodyVisible : ""
+              }`}
+            >
+              <p className={styles.modalEyebrow}>Selected Card</p>
+              <h2 className={styles.modalTitle} id={`modal-title-${selectedItem.id}`}>
+                {selectedItem.title}
+              </h2>
+              <p className={styles.modalDescription} id={`modal-description-${selectedItem.id}`}>
+                {selectedItem.description}
+              </p>
+
+              {selectedItem.href ? (
+                <a className={styles.modalAction} href={selectedItem.href}>
+                  Open Link
+                </a>
+              ) : null}
+            </div>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }
