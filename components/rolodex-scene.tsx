@@ -19,10 +19,11 @@ type SceneCard = {
 };
 
 const ITEM_MULTIPLIER = 3;
+const ITEM_DENSITY = 0.6;
 const FULL_ROTATION = Math.PI * 2;
 const BASE_CARD_WIDTH = 120;
 const BASE_CARD_HEIGHT = 90;
-const RING_TILT_X = 0.1;
+const RING_TILT_X = 0.015;
 const RING_TILT_Z = 0.00;
 const MAX_PIXEL_RATIO = 1.25;
 const ROTATION_EPSILON = 0.0002;
@@ -36,7 +37,9 @@ const SCENE_ITEMS: SceneItem[] = Array.from({ length: ITEM_MULTIPLIER }, (_, rep
     baseIndex,
     ringKey: `${repetition}-${item.id}`,
   })),
-).flat();
+)
+  .flat()
+  .slice(0, Math.max(1, Math.round(ROLEDEX_ITEMS.length * ITEM_MULTIPLIER * ITEM_DENSITY)));
 
 function getFrontCardIndex(rotation: number, count: number) {
   const step = FULL_ROTATION / count;
@@ -157,13 +160,13 @@ export default function RolodexScene() {
 
       renderer.setSize(width, height, false);
 
-      interaction.cardScale = getClamp(minSide * 0.002016, 1.836, 2.232);
+      interaction.cardScale = getClamp(minSide * 0.0024192, 2.2032, 2.6784);
       interaction.radiusX = getClamp(minSide * 0.36, 150, 328);
       interaction.radiusZ = interaction.radiusX * 0.82;
       interaction.baseCameraY = getClamp(minSide * 0.6, 260, 540);
       interaction.baseCameraZ = getClamp(minSide * 0.98, 470, 900);
       interaction.baseLookAtY = getClamp(minSide * 0.09, 26, 48);
-      interaction.groupY = getClamp(minSide * 0.075, 20, 46);
+      interaction.groupY = getClamp(minSide * 0.04, 10, 28);
 
       camera.fov = width < 640 ? 54 : width < 1024 ? 50 : 46;
       camera.aspect = width / height;
