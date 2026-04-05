@@ -189,6 +189,45 @@ export default function RolodexScene() {
     setTimeout(() => setSelected(null), 320);
   };
 
+  // ── Escape key + focus trap ────────────────────────────────────
+  useEffect(() => {
+    if (!selected) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeModal();
+        return;
+      }
+
+      // Focus trap
+      if (e.key !== "Tab") return;
+      const modal = document.querySelector<HTMLElement>("[role=dialog]");
+      if (!modal) return;
+      const focusable = modal.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    // Focus the close button on open
+    const closeBtn = document.querySelector<HTMLElement>(
+      "[role=dialog] button",
+    );
+    closeBtn?.focus();
+
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selected]);
+
   const handleClick = (idx: number, item: RolodexItem) => {
     if (suppressClick.current) return;
     targetRef.current = idx;
