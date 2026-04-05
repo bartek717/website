@@ -185,6 +185,29 @@
   text-transform: uppercase;
 }
 
+.nameplateLinks {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.45rem;
+  pointer-events: auto;
+}
+
+.nameplateLink {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+@media (hover: hover) {
+  .nameplateLink:hover {
+    color: var(--accent);
+  }
+}
+
 /* ── Helper hint (bottom center) ── */
 .helperWrap {
   pointer-events: none;

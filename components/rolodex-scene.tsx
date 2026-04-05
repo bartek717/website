@@ -299,6 +299,33 @@ export default function RolodexScene() {
           {personalData.profile.name}
         </span>
         <span className={styles.nameplateRole}>TPM &amp; product engineer</span>
+        <div className={styles.nameplateLinks}>
+          <a
+            href={`mailto:${personalData.profile.contact.email}`}
+            className={styles.nameplateLink}
+            aria-label="Email"
+          >
+            Email
+          </a>
+          <a
+            href={personalData.profile.contact.linkedin}
+            className={styles.nameplateLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            LinkedIn
+          </a>
+          <a
+            href={personalData.profile.contact.twitter}
+            className={styles.nameplateLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Twitter"
+          >
+            𝕏
+          </a>
+        </div>
       </div>
 
       {/* Helper hint */}
