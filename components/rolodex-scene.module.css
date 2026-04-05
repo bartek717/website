@@ -442,6 +442,21 @@
   }
 }
 
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .chromeMuted,
+  .modalBackdropButton,
+  .modalCard,
+  .modalClose,
+  .modalAction,
+  .nameplate,
+  .helperWrap,
+  .nameplateLink,
+  .rolodexCard {
+    transition: none;
+  }
+}
+
 /* ── Mobile ── */
 @media (width <= 48rem) {
   .glowWarm {
