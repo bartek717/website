@@ -13,6 +13,7 @@ import * as THREE from "three";
 
 import { ROLEDEX_ITEMS, type RolodexItem } from "@/components/rolodex-data";
 import styles from "@/components/rolodex-scene.module.css";
+import personalData from "@/personal_data.json";
 
 type SceneItem = RolodexItem & {
   baseIndex: number;
@@ -814,8 +815,12 @@ export default function RolodexScene() {
       group.rotation.x = RING_TILT_X;
       group.rotation.z = RING_TILT_Z;
 
-      const textures = await Promise.all(
+      const textureResults = await Promise.allSettled(
         ROLEDEX_ITEMS.map(async (item) => [item.src, await loadTexture(item.src)] as const),
+      );
+
+      const textures = textureResults.flatMap((r) =>
+        r.status === "fulfilled" ? [r.value] : [],
       );
 
       if (cancelled) {
@@ -958,6 +963,11 @@ export default function RolodexScene() {
         </div>
 
         <p className={styles.previewTitle}>{activeItem.title}</p>
+      </div>
+
+      <div className={`${styles.nameplate} ${modalVisible ? styles.chromeMuted : ""}`}>
+        <span className={styles.nameplateTitle}>{personalData.profile.name}</span>
+        <span className={styles.nameplateRole}>TPM &amp; product engineer</span>
       </div>
 
       <div className={`${styles.pill} ${modalVisible ? styles.chromeMuted : ""}`}>Scroll</div>

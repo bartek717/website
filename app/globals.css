@@ -1,6 +1,36 @@
 :root {
-  --background: #f7f4ec;
-  --foreground: #12100d;
+  /* ── Core palette ── */
+  --bg:           #f7f4ec;
+  --fg:           #12100d;
+  --muted:        #7B7269;
+  --accent:       #4D5D43;
+  --accent-dark:  #2d3e25;
+  --surface:      #ede9df;
+  --border:       #d8d3c9;
+
+  /* ── Legacy aliases (keep for gradual migration) ── */
+  --background: var(--bg);
+  --foreground: var(--fg);
+
+  /* ── Typography ── */
+  --font-display: var(--font-instrument-serif), serif;
+  --font-body:    var(--font-geist-sans), sans-serif;
+  --font-mono:    var(--font-geist-mono), monospace;
+
+  /* ── Border radius ── */
+  --r-sm:   4px;   /* tags */
+  --r-md:   8px;   /* cards */
+  --r-lg:   16px;  /* modals */
+
+  /* ── Spacing ── */
+  --sp-2xs: 2px;
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  24px;
+  --sp-xl:  32px;
+  --sp-2xl: 48px;
+  --sp-3xl: 64px;
 }
 
 * {
@@ -10,15 +40,15 @@
 html {
   height: 100%;
   min-height: 100%;
-  background: var(--background);
+  background: var(--bg);
 }
 
 body {
   display: flex;
   flex-direction: column;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
   min-width: 320px;
   margin: 0;
   min-height: 100%;

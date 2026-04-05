@@ -16,6 +16,7 @@
       "role": "Associate, QuestX (New Products & Innovation)",
       "period": "May 2025 - Aug 2025",
       "location": "Toronto, ON",
+      "image": "/websiteImages/Questrade.png",
       "description": "Led cross-functional product and innovation initiatives spanning knowledge systems, new product discovery, and enterprise AI adoption.",
       "highlights": [
         "Drove roadmap and launch for a new knowledge base across Product, Engineering, and Support; authored PRDs/PRFAQs, led BigQuery + NLP transcript analysis, and managed rollout/training, resulting in 40% fewer Tier-1 tickets and $500K/year savings.",
@@ -29,6 +30,7 @@
       "role": "Founding Product Engineer",
       "period": "Apr 2023 - Sep 2023",
       "location": "Toronto, ON",
+      "image": "/websiteImages/CallSmart.png",
       "description": "Led product roadmap and development of an AI communications platform for dental clinics, driving significant business impact and operational efficiency.",
       "highlights": [
         "Led product roadmap and full-stack development (Next.js, Supabase) of an AI communications platform adopted by 200+ dental clinics, contributing to $12M per year in revenue retention, and cutting manual follow-ups by 85%.",
@@ -42,6 +44,7 @@
       "role": "Software Engineering Intern",
       "period": "Feb 2024 - Aug 2024",
       "location": "Toronto, ON",
+      "image": "/websiteImages/exavalu.png",
       "description": "Developed vehicle fleet management features and optimized backend systems for improved cost efficiency and security.",
       "highlights": [
         "Shipped vehicle fleet management features (Java, Spring Boot, MySQL) for internal ops users.",
@@ -54,6 +57,7 @@
       "role": "Software Engineering Intern",
       "period": "Jan 2023 - Jul 2023",
       "location": "Kingston, ON",
+      "image": "/websiteImages/distributive.png",
       "description": "Enhanced user engagement through interactive frontend features and implemented secure backend authentication systems.",
       "highlights": [
         "Boosted user engagement by 25% through responsive and interactive features, including parallax scrolling.",
@@ -67,6 +71,7 @@
       "role": "Research Intern",
       "period": "Jan 2022 - May 2022",
       "location": "Toronto, ON",
+      "image": "/websiteImages/UToronto.png",
       "description": "Collaborated with graduate research lab on mathematics project applying machine learning to pattern recognition problems.",
       "highlights": [
         "Collaborated with a graduate research lab on a mathematics project; scoped experiments/approach with faculty.",
@@ -83,7 +88,8 @@
       "tags": ["Next.js", "TypeScript", "Fastify", "Supabase", "Stripe", "Resend", "Sentry"],
       "year": "2026",
       "link": "https://www.talyth.com/",
-      "status": "live"
+      "status": "live",
+      "image": "/websiteImages/Talyth.png"
     },
     {
       "title": "Efficacy of K-Center Greedy Coresets",
@@ -91,7 +97,8 @@
       "tags": ["Python", "Machine Learning", "Coresets", "Active Learning"],
       "year": "2024",
       "link": "https://drive.google.com/file/d/1IfwUNqBIgRo-SQ_JeLR_gn6TTh12475q/view?usp=sharing",
-      "status": "live"
+      "status": "live",
+      "image": "/websiteImages/Efficacy%20of%20K-Center%20Greedy%20Coresets.png"
     },
     {
       "title": "QuSearch",
@@ -99,21 +106,24 @@
       "tags": ["Next.js", "Supabase", "TypeScript"],
       "year": "2024",
       "link": "https://www.qusearch.ca",
-      "status": "live"
+      "status": "live",
+      "image": "/websiteImages/QuSearch.png"
     },
     {
       "title": "Course Central",
       "description": "Built a Next.js app for course, GPA, enrollment, and review tracking; reached 4,300 users and 40,000 page views.",
       "tags": ["React", "Next.js", "TypeScript", "Python", "Selenium", "MongoDB"],
       "year": "2024",
-      "status": "live"
+      "status": "live",
+      "image": "/websiteImages/CourseCentral.png"
     },
     {
       "title": "Memoria",
       "description": "Record, transcribe, and chat with thoughts (LLM-powered); reached 800+ active users and 10,000 page views.",
       "tags": ["React", "Node.js", "Express.js", "Supabase", "LLM", "Voice AI"],
       "year": "2023",
-      "status": "live"
+      "status": "live",
+      "image": "/websiteImages/Memoria.png"
     }
   ],
   "essays": [
@@ -123,7 +133,8 @@
       "excerpt": "Exploring how Canada's open banking framework is reshaping financial services and shifting power dynamics in the industry.",
       "type": "opinion",
       "readTime": "5 min",
-      "link": "https://medium.com/@bartekmkowalski/when-data-moves-power-shifts-canadas-open-banking-moment-94bc7a934c8b"
+      "link": "https://medium.com/@bartekmkowalski/when-data-moves-power-shifts-canadas-open-banking-moment-94bc7a934c8b",
+      "image": "/websiteImages/OpenBanking.png"
     },
     {
       "title": "The Rise and Potential of Open Source Large Language Models in AI",
@@ -131,7 +142,8 @@
       "excerpt": "Exploring how open-source LLMs are democratizing AI development and reshaping the technological landscape.",
       "type": "essay",
       "readTime": "8 min",
-      "link": "https://medium.com/@bartekmkowalski/the-rise-and-potential-of-open-source-large-language-models-in-ai-0d30450f8b3c"
+      "link": "https://medium.com/@bartekmkowalski/the-rise-and-potential-of-open-source-large-language-models-in-ai-0d30450f8b3c",
+      "image": "/websiteImages/OpenSource.png"
     },
     {
       "title": "ChatGPT: Is the Education Industry Ready?",
@@ -139,7 +151,8 @@
       "excerpt": "Examining the implications of ChatGPT and generative AI on education systems and learning methodologies.",
       "type": "opinion",
       "readTime": "6 min",
-      "link": "https://medium.com/qmind-ai/chatgpt-is-the-education-industry-ready-df8bd7575371"
+      "link": "https://medium.com/qmind-ai/chatgpt-is-the-education-industry-ready-df8bd7575371",
+      "image": "/websiteImages/ChatGPT.png"
     }
   ],
   "film": {

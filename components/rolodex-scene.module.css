@@ -24,7 +24,7 @@
   top: 10%;
   width: 18rem;
   height: 18rem;
-  background: rgb(242 209 117 / 0.2);
+  background: rgb(242 209 117 / 0.18);
 }
 
 .glowCool {
@@ -32,7 +32,7 @@
   bottom: 12%;
   width: 24rem;
   height: 24rem;
-  background: rgb(103 180 255 / 0.12);
+  background: rgb(77 93 67 / 0.08);
 }
 
 .viewport {
@@ -54,10 +54,10 @@
   left: max(env(safe-area-inset-left), 1rem);
   width: min(15rem, calc(100vw - 2rem));
   padding: 0.75rem;
-  border: 1px solid rgb(0 0 0 / 0.06);
-  border-radius: 1.6rem;
-  background: rgb(255 255 255 / 0.88);
-  box-shadow: 0 24px 80px rgb(18 16 12 / 0.12);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: rgb(247 244 236 / 0.88);
+  box-shadow: 0 24px 80px rgb(18 16 12 / 0.10);
   backdrop-filter: blur(24px);
   transition:
     opacity 220ms ease,
@@ -66,8 +66,8 @@
 
 .previewImageFrame {
   overflow: hidden;
-  border-radius: 1.2rem;
-  background: #ece8de;
+  border-radius: var(--r-md);
+  background: var(--surface);
 }
 
 .previewImage {
@@ -80,12 +80,13 @@
 
 .previewTitle {
   margin: 0.75rem 0 0;
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgb(0 0 0 / 0.4);
+  color: var(--muted);
 }
 
 .pill {
@@ -128,12 +129,13 @@
 .helper {
   max-width: 24rem;
   padding: 0.5rem 1rem;
-  border: 1px solid rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.72);
-  color: rgb(0 0 0 / 0.35);
-  font-size: 0.68rem;
-  letter-spacing: 0.24em;
+  background: rgb(247 244 236 / 0.72);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
   text-align: center;
   text-transform: uppercase;
   backdrop-filter: blur(16px);
@@ -142,6 +144,37 @@
 .chromeMuted {
   opacity: 0;
   filter: blur(8px);
+}
+
+.nameplate {
+  pointer-events: none;
+  position: fixed;
+  z-index: 20;
+  top: max(env(safe-area-inset-top), 1.25rem);
+  right: max(env(safe-area-inset-right), 1.25rem);
+  text-align: right;
+  transition:
+    opacity 220ms ease,
+    filter 220ms ease;
+}
+
+.nameplateTitle {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+.nameplateRole {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-top: 0.2rem;
+  text-transform: uppercase;
 }
 
 .modalRoot {
@@ -171,8 +204,8 @@
 
 .modalBackdropButtonVisible {
   opacity: 1;
-  background: rgb(247 244 236 / 0.34);
-  backdrop-filter: blur(14px) saturate(1.02);
+  background: rgb(247 244 236 / 0.38);
+  backdrop-filter: blur(14px) saturate(1.0);
 }
 
 .modalCard {
@@ -182,11 +215,11 @@
   width: var(--modal-width);
   height: var(--modal-height);
   overflow: hidden;
-  border: 1px solid rgb(18 16 12 / 0.08);
-  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(252 250 246 / 0.96));
-  box-shadow: 0 14px 36px rgb(18 16 12 / 0.14);
+    linear-gradient(180deg, rgb(247 244 236 / 0.99), rgb(243 239 229 / 0.97));
+  box-shadow: 0 14px 36px rgb(18 16 12 / 0.12);
   pointer-events: auto;
   transform-origin: center center;
   transform:
@@ -212,12 +245,12 @@
 
 .modalCardExpanded {
   transform: translate3d(0, 0, 0) scale(1, 1) rotateX(0rad) rotateY(0rad);
-  border-radius: 1.75rem;
+  border-radius: var(--r-lg);
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(250 247 241 / 0.98));
+    linear-gradient(180deg, rgb(247 244 236 / 0.99), rgb(241 237 226 / 0.99));
   box-shadow:
-    0 44px 120px rgb(18 16 12 / 0.2),
-    0 8px 24px rgb(18 16 12 / 0.08);
+    0 44px 120px rgb(18 16 12 / 0.16),
+    0 8px 24px rgb(18 16 12 / 0.06);
 }
 
 .modalCardReducedMotion {
@@ -235,7 +268,7 @@
   inset: 0;
   overflow: hidden;
   height: 100%;
-  background: #ece8de;
+  background: var(--surface);
   transition:
     height 380ms cubic-bezier(0.22, 1, 0.36, 1),
     border-radius 380ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -293,28 +326,30 @@
 
 .modalEyebrow {
   margin: 0;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgb(18 16 12 / 0.42);
+  color: var(--muted);
 }
 
 .modalTitle {
   margin: 0;
-  font-size: clamp(1.6rem, 2vw, 2.3rem);
-  line-height: 0.96;
-  letter-spacing: -0.04em;
-  color: rgb(18 16 12 / 0.96);
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 2.2vw, 2.6rem);
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--fg);
   text-wrap: balance;
 }
 
 .modalDescription {
   margin: 0;
   max-width: 32rem;
-  font-size: 0.98rem;
-  line-height: 1.6;
-  color: rgb(18 16 12 / 0.7);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--muted);
   text-wrap: pretty;
 }
 
@@ -324,20 +359,21 @@
   justify-content: center;
   width: fit-content;
   min-width: 8.5rem;
-  padding: 0.78rem 1.1rem;
-  border-radius: 999px;
-  background: rgb(18 16 12 / 0.92);
-  color: white;
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  padding: 0.72rem 1.1rem;
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: #f7f4ec;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     background-color 220ms ease,
     box-shadow 220ms ease;
-  box-shadow: 0 14px 28px rgb(18 16 12 / 0.14);
+  box-shadow: 0 8px 20px rgb(77 93 67 / 0.22);
 }
 
 .modalClose {
@@ -345,23 +381,25 @@
   top: 0.9rem;
   right: 0.9rem;
   z-index: 2;
-  padding: 0.55rem 0.8rem;
-  border: 0;
-  border-radius: 999px;
-  background: rgb(18 16 12 / 0.72);
-  color: white;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: rgb(247 244 236 / 0.88);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   opacity: 0;
   text-transform: uppercase;
   transform: translateY(-10px);
+  backdrop-filter: blur(8px);
   transition:
     opacity 200ms ease 90ms,
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1) 90ms,
     background-color 220ms ease,
     box-shadow 220ms ease;
-  box-shadow: 0 10px 22px rgb(18 16 12 / 0.14);
+  box-shadow: 0 4px 12px rgb(18 16 12 / 0.08);
 }
 
 .modalCloseVisible {
@@ -377,33 +415,35 @@
 }
 
 .modalTag {
-  padding: 0.25rem 0.6rem;
-  border: 1px solid rgb(18 16 12 / 0.08);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.4);
-  color: rgb(18 16 12 / 0.5);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: none;
 }
 
 .modalClose:focus-visible,
 .modalAction:focus-visible {
-  outline: 2px solid rgb(18 16 12 / 0.7);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
 @media (hover: hover) {
   .modalClose:hover {
-    background: rgb(18 16 12 / 0.88);
-    box-shadow: 0 14px 28px rgb(18 16 12 / 0.18);
+    background: var(--surface);
+    color: var(--fg);
+    box-shadow: 0 4px 16px rgb(18 16 12 / 0.10);
   }
 
   .modalAction:hover {
     transform: translateY(-1px);
-    background: rgb(10 9 8 / 0.98);
-    box-shadow: 0 18px 32px rgb(18 16 12 / 0.2);
+    background: var(--accent-dark);
+    box-shadow: 0 12px 28px rgb(77 93 67 / 0.28);
   }
 }
 

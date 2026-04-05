@@ -24,7 +24,7 @@ const SVG_PATHS = [
 
 const projects: RolodexItem[] = personalData.projects.map((p, i) => ({
   id: `project-${p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-  src: SVG_PATHS[i % SVG_PATHS.length],
+  src: (p as any).image ?? SVG_PATHS[i % SVG_PATHS.length],
   title: p.title,
   description: p.description,
   href: (p as any).link,
@@ -34,7 +34,7 @@ const projects: RolodexItem[] = personalData.projects.map((p, i) => ({
 
 const experience: RolodexItem[] = personalData.experience.map((e, i) => ({
   id: `exp-${e.company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-  src: SVG_PATHS[(projects.length + i) % SVG_PATHS.length],
+  src: (e as any).image ?? SVG_PATHS[(projects.length + i) % SVG_PATHS.length],
   title: `${e.role} @ ${e.company}`,
   description: e.description,
   tags: e.tags,
@@ -43,7 +43,7 @@ const experience: RolodexItem[] = personalData.experience.map((e, i) => ({
 
 const essays: RolodexItem[] = personalData.essays.map((e, i) => ({
   id: `essay-${e.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-  src: SVG_PATHS[(projects.length + experience.length + i) % SVG_PATHS.length],
+  src: (e as any).image ?? SVG_PATHS[(projects.length + experience.length + i) % SVG_PATHS.length],
   title: e.title,
   description: e.excerpt,
   href: e.link,
