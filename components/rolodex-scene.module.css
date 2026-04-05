@@ -307,7 +307,12 @@
   top: 0.9rem;
   right: 0.9rem;
   z-index: 2;
-  padding: 0.4rem 0.7rem;
+  padding: 0.55rem 0.8rem;
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   background: rgb(247 244 236 / 0.88);
@@ -407,7 +412,8 @@
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  padding: 0.62rem 0.95rem;
+  padding: 0.7rem 1rem;
+  min-height: 44px;
   border-radius: var(--r-sm);
   background: var(--accent);
   color: #f7f4ec;
