@@ -23,6 +23,7 @@ type SceneCard = {
   mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
   item: SceneItem;
   baseAngle: number;
+  currentRadiusOffset: number;
 };
 
 type ScreenRect = {
@@ -32,7 +33,16 @@ type ScreenRect = {
   height: number;
 };
 
-type ModalPhase = "closed" | "opening" | "open" | "closing";
+type ModalPhase = "closed" | "lifting" | "morphing" | "open" | "collapsing" | "settling";
+
+type TransitionSnapshot = {
+  selectedBaseIndex: number;
+  sourceRect: ScreenRect;
+  handoffRect: ScreenRect | null;
+  targetRect: ScreenRect;
+  previousFocus: HTMLElement | null;
+  startTime: number;
+};
 
 const ITEM_MULTIPLIER = 3;
 const ITEM_DENSITY = 0.6;
@@ -92,9 +102,14 @@ function getModalTargetRect(): ScreenRect {
   };
 }
 
-function getModalStyle(fromRect: ScreenRect, toRect: ScreenRect): CSSProperties {
-  const translateX = fromRect.left - toRect.left;
-  const translateY = fromRect.top - toRect.top;
+function getModalStyle(fromRect: ScreenRect, toRect: ScreenRect, rotX = 0, rotY = 0): CSSProperties {
+  const targetCenterX = toRect.left + toRect.width / 2;
+  const targetCenterY = toRect.top + toRect.height / 2;
+  const sourceCenterX = fromRect.left + fromRect.width / 2;
+  const sourceCenterY = fromRect.top + fromRect.height / 2;
+
+  const translateX = sourceCenterX - targetCenterX;
+  const translateY = sourceCenterY - targetCenterY;
   const scaleX = fromRect.width / toRect.width;
   const scaleY = fromRect.height / toRect.height;
 
@@ -107,6 +122,8 @@ function getModalStyle(fromRect: ScreenRect, toRect: ScreenRect): CSSProperties 
     ["--modal-translate-y" as const]: `${translateY}px`,
     ["--modal-scale-x" as const]: `${scaleX}`,
     ["--modal-scale-y" as const]: `${scaleY}`,
+    ["--modal-rotate-x" as const]: `${rotX}rad`,
+    ["--modal-rotate-y" as const]: `${rotY}rad`,
   } as CSSProperties;
 }
 
@@ -115,16 +132,15 @@ export default function RolodexScene() {
   const modalCardRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const getCardScreenRectRef = useRef<((card: SceneCard) => ScreenRect | null) | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
   const openFrameRef = useRef<number | null>(null);
   const modalPhaseRef = useRef<ModalPhase>("closed");
   const [activeBaseIndex, setActiveBaseIndex] = useState(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  const [selectedBaseIndex, setSelectedBaseIndex] = useState<number | null>(null);
+  const [transitionSnapshot, setTransitionSnapshot] = useState<TransitionSnapshot | null>(null);
   const [modalPhase, setModalPhase] = useState<ModalPhase>("closed");
-  const [modalSourceRect, setModalSourceRect] = useState<ScreenRect | null>(null);
-  const [modalTargetRect, setModalTargetRect] = useState<ScreenRect | null>(null);
 
   const setPreviewIndex = useEffectEvent((nextBaseIndex: number) => {
     startTransition(() => {
@@ -159,12 +175,14 @@ export default function RolodexScene() {
   }, [modalPhase]);
 
   useEffect(() => {
-    if (modalPhase === "closed" || selectedBaseIndex === null) {
+    if (modalPhase === "closed" || !transitionSnapshot) {
       return;
     }
 
     const updateTargetRect = () => {
-      setModalTargetRect(getModalTargetRect());
+      setTransitionSnapshot((prev) => 
+        prev ? { ...prev, targetRect: getModalTargetRect() } : null
+      );
     };
 
     updateTargetRect();
@@ -173,7 +191,7 @@ export default function RolodexScene() {
     return () => {
       window.removeEventListener("resize", updateTargetRect);
     };
-  }, [modalPhase, selectedBaseIndex]);
+  }, [modalPhase, transitionSnapshot?.selectedBaseIndex]);
 
   useEffect(() => {
     if (modalPhase === "closed") {
@@ -212,20 +230,7 @@ export default function RolodexScene() {
 
       event.preventDefault();
 
-      if (closeTimeoutRef.current !== null) {
-        window.clearTimeout(closeTimeoutRef.current);
-      }
-
-      setModalPhase("closing");
-      closeTimeoutRef.current = window.setTimeout(() => {
-        closeTimeoutRef.current = null;
-        setModalPhase("closed");
-        setSelectedBaseIndex(null);
-        setModalSourceRect(null);
-        setModalTargetRect(null);
-        previousFocusRef.current?.focus();
-        previousFocusRef.current = null;
-      }, prefersReducedMotion ? REDUCED_MODAL_MS : MODAL_TRANSITION_MS);
+      requestCloseModal();
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -236,7 +241,7 @@ export default function RolodexScene() {
   }, [modalPhase, prefersReducedMotion]);
 
   const requestCloseModal = () => {
-    if (modalPhaseRef.current === "closed" || modalPhaseRef.current === "closing") {
+    if (modalPhaseRef.current === "closed" || modalPhaseRef.current === "collapsing" || modalPhaseRef.current === "settling") {
       return;
     }
 
@@ -249,17 +254,26 @@ export default function RolodexScene() {
       openFrameRef.current = null;
     }
 
-    setModalPhase("closing");
+    setModalPhase("collapsing");
 
     closeTimeoutRef.current = window.setTimeout(() => {
-      closeTimeoutRef.current = null;
-      setModalPhase("closed");
-      setSelectedBaseIndex(null);
-      setModalSourceRect(null);
-      setModalTargetRect(null);
-      previousFocusRef.current?.focus();
-      previousFocusRef.current = null;
-    }, prefersReducedMotion ? REDUCED_MODAL_MS : MODAL_TRANSITION_MS);
+      if (prefersReducedMotion) {
+        closeTimeoutRef.current = null;
+        setModalPhase("closed");
+        setTransitionSnapshot(null);
+        previousFocusRef.current?.focus();
+        previousFocusRef.current = null;
+      } else {
+        setModalPhase("settling");
+        closeTimeoutRef.current = window.setTimeout(() => {
+          closeTimeoutRef.current = null;
+          setModalPhase("closed");
+          setTransitionSnapshot(null);
+          previousFocusRef.current?.focus();
+          previousFocusRef.current = null;
+        }, 160);
+      }
+    }, prefersReducedMotion ? REDUCED_MODAL_MS : 280);
   };
 
   const openModalFromCard = useEffectEvent((card: SceneCard, sourceRect: ScreenRect) => {
@@ -276,17 +290,40 @@ export default function RolodexScene() {
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     setPreviewIndex(card.item.baseIndex);
-    setSelectedBaseIndex(card.item.baseIndex);
-    setModalSourceRect(sourceRect);
-    setModalTargetRect(getModalTargetRect());
-    setModalPhase("opening");
-
-    openFrameRef.current = window.requestAnimationFrame(() => {
-      openFrameRef.current = window.requestAnimationFrame(() => {
-        setModalPhase("open");
-        openFrameRef.current = null;
-      });
+    setTransitionSnapshot({
+      selectedBaseIndex: card.item.baseIndex,
+      sourceRect,
+      handoffRect: null,
+      targetRect: getModalTargetRect(),
+      previousFocus: document.activeElement instanceof HTMLElement ? document.activeElement : null,
+      startTime: performance.now(),
     });
+
+    if (prefersReducedMotion) {
+      setModalPhase("open");
+    } else {
+      setModalPhase("lifting");
+
+      openFrameRef.current = window.setTimeout(() => {
+        openFrameRef.current = null;
+        const liveRect = getCardScreenRectRef.current?.(card) || sourceRect;
+
+        setTransitionSnapshot((prev) => 
+          prev ? { ...prev, handoffRect: liveRect } : null
+        );
+
+        openFrameRef.current = window.requestAnimationFrame(() => {
+            openFrameRef.current = window.requestAnimationFrame(() => {
+               setModalPhase("morphing");
+
+               openFrameRef.current = window.setTimeout(() => {
+                 setModalPhase("open");
+                 openFrameRef.current = null;
+               }, 180);
+            });
+        });
+      }, 140);
+    }
   });
 
   useEffect(() => {
@@ -350,6 +387,7 @@ export default function RolodexScene() {
       baseCameraZ: 0,
       baseLookAtY: 0,
       groupY: 0,
+      selectedRingIndex: null as number | null,
     };
 
     const renderer = new THREE.WebGLRenderer({
@@ -407,11 +445,13 @@ export default function RolodexScene() {
       group.position.y = interaction.groupY;
 
       for (const card of cards) {
-        const x = Math.sin(card.baseAngle) * interaction.radiusX;
-        const z = Math.cos(card.baseAngle) * interaction.radiusZ;
+        const effectiveRadiusX = interaction.radiusX + card.currentRadiusOffset;
+        const effectiveRadiusZ = interaction.radiusZ + card.currentRadiusOffset;
+
+        const x = Math.sin(card.baseAngle) * effectiveRadiusX;
+        const z = Math.cos(card.baseAngle) * effectiveRadiusZ;
 
         card.mesh.position.set(x, card.mesh.position.y, z);
-        card.mesh.rotation.y = Math.PI / 2 + card.baseAngle;
         card.mesh.scale.setScalar(interaction.cardScale);
       }
 
@@ -470,6 +510,8 @@ export default function RolodexScene() {
         height,
       };
     };
+
+    getCardScreenRectRef.current = getCardScreenRect;
 
     const syncHover = () => {
       const previousHover = interaction.hoveredRingIndex;
@@ -571,6 +613,7 @@ export default function RolodexScene() {
       const clickedCard = !interaction.dragMoved ? pickCardAtPointer() : null;
 
       if (clickedCard) {
+        interaction.selectedRingIndex = clickedCard.mesh.userData.ringIndex as number;
         const sourceRect = getCardScreenRect(clickedCard);
 
         if (sourceRect) {
@@ -643,32 +686,72 @@ export default function RolodexScene() {
         setPreviewIndex(activeCard.item.baseIndex);
       }
 
+      const phase = modalPhaseRef.current;
+      const isLifting = phase === "lifting";
+      const isSettling = phase === "settling";
+      const isGhostActive = phase === "morphing" || phase === "open" || phase === "collapsing";
+
       for (let index = 0; index < cards.length; index += 1) {
         const card = cards[index];
         const isHovered = index === interaction.hoveredRingIndex;
         const isFront = index === frontCardIndex;
-        const targetLift = isHovered ? 34 : isFront ? 22 : 0;
-        const targetScale =
-          interaction.cardScale * (isHovered ? 1.08 : isFront ? 1.03 : 1);
+        const isSelected = index === interaction.selectedRingIndex;
+
+        let targetLift = isHovered ? 34 : isFront ? 22 : 0;
+        let targetScale = interaction.cardScale * (isHovered ? 1.08 : isFront ? 1.03 : 1);
+        let targetRadiusOffset = 0;
+        let targetRotY = Math.PI / 2 + card.baseAngle;
+
+        if (phase !== "closed") {
+          if (isSelected) {
+            targetScale = interaction.cardScale * 1.08;
+            targetLift = 15;
+            targetRadiusOffset = interaction.radiusX * 0.45;
+            targetRotY = Math.PI / 2 - interaction.currentRotation;
+            card.mesh.visible = !isGhostActive;
+          } else {
+            targetScale = interaction.cardScale * 0.96;
+            targetLift = -15;
+            targetRadiusOffset = -interaction.radiusX * 0.1;
+            card.mesh.visible = true;
+          }
+        } else {
+          card.mesh.visible = true;
+          if (isSelected) {
+            interaction.selectedRingIndex = null;
+          }
+        }
 
         const liftDelta = targetLift - card.mesh.position.y;
-
         if (Math.abs(liftDelta) > LIFT_EPSILON) {
           needsAnotherFrame = true;
         }
-
         card.mesh.position.y += liftDelta * 0.16;
 
         const scaleDelta = targetScale - card.mesh.scale.x;
-
         if (Math.abs(scaleDelta) > SCALE_EPSILON) {
           needsAnotherFrame = true;
         }
-
         const nextScale = card.mesh.scale.x + scaleDelta * 0.16;
-
         scratchScale.setScalar(nextScale);
         card.mesh.scale.copy(scratchScale);
+
+        const radiusDelta = targetRadiusOffset - card.currentRadiusOffset;
+        if (Math.abs(radiusDelta) > 1) {
+          needsAnotherFrame = true;
+        }
+        card.currentRadiusOffset += radiusDelta * 0.16;
+
+        const effectiveRadiusX = interaction.radiusX + card.currentRadiusOffset;
+        const effectiveRadiusZ = interaction.radiusZ + card.currentRadiusOffset;
+        card.mesh.position.x = Math.sin(card.baseAngle) * effectiveRadiusX;
+        card.mesh.position.z = Math.cos(card.baseAngle) * effectiveRadiusZ;
+
+        const rotDelta = targetRotY - card.mesh.rotation.y;
+        if (Math.abs(rotDelta) > ROTATION_EPSILON) {
+          needsAnotherFrame = true;
+        }
+        card.mesh.rotation.y += rotDelta * 0.16;
       }
 
       const targetCameraX =
@@ -775,6 +858,7 @@ export default function RolodexScene() {
           mesh,
           item,
           baseAngle: (index / SCENE_ITEMS.length) * FULL_ROTATION,
+          currentRadiusOffset: 0,
         });
         cardMeshes.push(mesh);
 
@@ -833,16 +917,22 @@ export default function RolodexScene() {
 
   const activeItem = getPreviewItem(activeBaseIndex);
   const selectedItem =
-    selectedBaseIndex !== null ? ROLEDEX_ITEMS[selectedBaseIndex] ?? null : null;
+    transitionSnapshot?.selectedBaseIndex !== undefined ? ROLEDEX_ITEMS[transitionSnapshot.selectedBaseIndex] ?? null : null;
   const modalMounted =
-    selectedItem !== null && modalSourceRect !== null && modalTargetRect !== null;
-  const modalExpanded = modalPhase === "open";
+    selectedItem !== null && transitionSnapshot !== null && transitionSnapshot.targetRect !== null;
+  const isCardExpanded = modalPhase === "open" || modalPhase === "morphing";
+  const isBodyVisible = modalPhase === "open";
   const modalVisible = modalPhase !== "closed";
+  const ghostVisibleAndPositioned = transitionSnapshot?.handoffRect !== null;
+  const isGhostVisible = modalPhase === "morphing" || modalPhase === "open" || modalPhase === "collapsing" || (modalPhase === "lifting" && ghostVisibleAndPositioned);
+
   const modalStyle =
-    modalMounted && modalSourceRect && modalTargetRect
+    isGhostVisible && transitionSnapshot
       ? getModalStyle(
-          prefersReducedMotion ? modalTargetRect : modalSourceRect,
-          modalTargetRect,
+          prefersReducedMotion ? transitionSnapshot.targetRect : (transitionSnapshot.handoffRect || transitionSnapshot.sourceRect),
+          transitionSnapshot.targetRect,
+          0,
+          0
         )
       : undefined;
 
@@ -876,12 +966,12 @@ export default function RolodexScene() {
         <div className={styles.helper}>Wheel, drag, and swipe</div>
       </div>
 
-      {modalMounted && selectedItem ? (
+      {isGhostVisible && selectedItem ? (
         <div className={styles.modalRoot}>
           <button
             aria-label="Close details"
             className={`${styles.modalBackdropButton} ${
-              modalExpanded ? styles.modalBackdropButtonVisible : ""
+              isCardExpanded || modalPhase === "collapsing" ? styles.modalBackdropButtonVisible : ""
             }`}
             onClick={requestCloseModal}
             tabIndex={-1}
@@ -893,7 +983,7 @@ export default function RolodexScene() {
             aria-labelledby={`modal-title-${selectedItem.id}`}
             aria-modal="true"
             className={`${styles.modalCard} ${
-              modalExpanded ? styles.modalCardExpanded : ""
+              isCardExpanded ? styles.modalCardExpanded : ""
             } ${prefersReducedMotion ? styles.modalCardReducedMotion : ""}`}
             ref={modalCardRef}
             role="dialog"
@@ -902,7 +992,7 @@ export default function RolodexScene() {
             <button
               aria-label="Close details"
               className={`${styles.modalClose} ${
-                modalExpanded ? styles.modalCloseVisible : ""
+                isCardExpanded ? styles.modalCloseVisible : ""
               }`}
               onClick={requestCloseModal}
               ref={closeButtonRef}
@@ -913,7 +1003,7 @@ export default function RolodexScene() {
 
             <div
               className={`${styles.modalMedia} ${
-                modalExpanded ? styles.modalMediaExpanded : ""
+                isCardExpanded ? styles.modalMediaExpanded : ""
               }`}
             >
               <Image
@@ -928,10 +1018,15 @@ export default function RolodexScene() {
 
             <div
               className={`${styles.modalBody} ${
-                modalExpanded ? styles.modalBodyVisible : ""
+                isBodyVisible ? styles.modalBodyVisible : ""
               }`}
             >
-              <p className={styles.modalEyebrow}>Selected Card</p>
+              <p className={styles.modalEyebrow}>
+                {selectedItem.id.startsWith("project-") ? "Project" : 
+                 selectedItem.id.startsWith("exp-") ? "Experience" : 
+                 selectedItem.id.startsWith("essay-") ? "Essay" : "Selected Card"}
+                {selectedItem.meta ? ` • ${selectedItem.meta}` : ""}
+              </p>
               <h2 className={styles.modalTitle} id={`modal-title-${selectedItem.id}`}>
                 {selectedItem.title}
               </h2>
@@ -939,8 +1034,16 @@ export default function RolodexScene() {
                 {selectedItem.description}
               </p>
 
+              {selectedItem.tags && selectedItem.tags.length > 0 ? (
+                <div className={styles.modalTags}>
+                  {selectedItem.tags.map(tag => (
+                    <span key={tag} className={styles.modalTag}>{tag}</span>
+                  ))}
+                </div>
+              ) : null}
+
               {selectedItem.href ? (
-                <a className={styles.modalAction} href={selectedItem.href}>
+                <a className={styles.modalAction} href={selectedItem.href} target="_blank" rel="noopener noreferrer">
                   Open Link
                 </a>
               ) : null}

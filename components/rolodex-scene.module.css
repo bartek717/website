@@ -150,6 +150,7 @@
   z-index: 40;
   pointer-events: none;
   isolation: isolate;
+  perspective: 1200px;
 }
 
 .modalBackdropButton {
@@ -187,15 +188,17 @@
     linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(252 250 246 / 0.96));
   box-shadow: 0 14px 36px rgb(18 16 12 / 0.14);
   pointer-events: auto;
-  transform-origin: top left;
+  transform-origin: center center;
   transform:
-    translate3d(var(--modal-translate-x), var(--modal-translate-y), 0)
-    scale(var(--modal-scale-x), var(--modal-scale-y));
+    translate3d(var(--modal-translate-x, 0), var(--modal-translate-y, 0), 0)
+    scale(var(--modal-scale-x, 1), var(--modal-scale-y, 1))
+    rotateX(var(--modal-rotate-x, 0rad))
+    rotateY(var(--modal-rotate-y, 0rad));
   transition:
-    transform 420ms cubic-bezier(0.18, 0.88, 0.24, 1),
-    border-radius 380ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 420ms cubic-bezier(0.18, 0.88, 0.24, 1),
-    background-color 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 300ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity 220ms ease;
   will-change:
     transform,
@@ -208,7 +211,7 @@
 }
 
 .modalCardExpanded {
-  transform: translate3d(0, 0, 0) scale(1, 1);
+  transform: translate3d(0, 0, 0) scale(1, 1) rotateX(0rad) rotateY(0rad);
   border-radius: 1.75rem;
   background:
     linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(250 247 241 / 0.98));
@@ -364,6 +367,25 @@
 .modalCloseVisible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.modalTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.modalTag {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid rgb(18 16 12 / 0.08);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.4);
+  color: rgb(18 16 12 / 0.5);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .modalClose:focus-visible,
