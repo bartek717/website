@@ -25,7 +25,9 @@ const SVG_PATHS = [
   "/rolodex/lime-echo.svg",
 ];
 
-const IMAGE_SCALE: Record<string, number> = {};
+const IMAGE_SCALE: Record<string, number> = {
+  talyth: 1.35,
+};
 
 const IMAGE_POSITION: Record<string, string> = {};
 
