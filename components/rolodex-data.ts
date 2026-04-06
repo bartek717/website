@@ -8,6 +8,7 @@ export type RolodexItem = {
   href?: string;
   tags?: string[];
   meta?: string;
+  darkBg?: boolean;
 };
 
 const SVG_PATHS = [
@@ -32,6 +33,8 @@ const projects: RolodexItem[] = personalData.projects.map((p, i) => ({
   meta: (p as any).year,
 }));
 
+const DARK_BG_COMPANIES = ["distributive"];
+
 const experience: RolodexItem[] = personalData.experience.map((e, i) => ({
   id: `exp-${e.company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
   src: (e as any).image ?? SVG_PATHS[(projects.length + i) % SVG_PATHS.length],
@@ -39,6 +42,7 @@ const experience: RolodexItem[] = personalData.experience.map((e, i) => ({
   description: e.description,
   tags: e.tags,
   meta: e.period,
+  darkBg: DARK_BG_COMPANIES.includes(e.company.toLowerCase()),
 }));
 
 const essays: RolodexItem[] = personalData.essays.map((e, i) => ({

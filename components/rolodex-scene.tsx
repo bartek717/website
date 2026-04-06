@@ -267,7 +267,7 @@ export default function RolodexScene() {
               <div
                 className={`${styles.cardImageFrame} ${
                   usesContainedImage(item) ? styles.cardImageFrameContained : ""
-                }`}
+                } ${item.darkBg ? styles.cardImageFrameDarkBg : ""}`}
               >
                 <Image
                   src={item.src}
@@ -275,7 +275,7 @@ export default function RolodexScene() {
                   fill
                   className={`${styles.cardImage} ${
                     usesContainedImage(item) ? styles.cardImageContained : ""
-                  }`}
+                  } ${item.darkBg ? styles.cardImageDarkBg : ""}`}
                   loading={idx === 0 ? "eager" : "lazy"}
                   sizes="280px"
                 />
@@ -363,7 +363,7 @@ export default function RolodexScene() {
             <div
               className={`${styles.modalMedia} ${
                 usesContainedImage(selected) ? styles.modalMediaContained : ""
-              }`}
+              } ${selected.darkBg ? styles.modalMediaDarkBg : ""}`}
             >
               <Image
                 src={selected.src}
@@ -371,7 +371,7 @@ export default function RolodexScene() {
                 fill
                 className={`${styles.modalImage} ${
                   usesContainedImage(selected) ? styles.modalImageContained : ""
-                }`}
+                } ${selected.darkBg ? styles.modalImageDarkBg : ""}`}
                 sizes="(max-width: 640px) 100vw, 520px"
               />
             </div>
