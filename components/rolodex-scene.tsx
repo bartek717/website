@@ -337,11 +337,23 @@ export default function RolodexScene() {
         </div>
       </div>
 
+      {/* Swipe indicators (mobile) */}
+      <div
+        className={`${styles.swipeHints} ${selected ? styles.chromeMuted : ""}`}
+        aria-hidden="true"
+      >
+        <span className={styles.swipeArrow}>‹</span>
+        <span className={styles.swipeArrow}>›</span>
+      </div>
+
       {/* Helper hint */}
       <div
         className={`${styles.helperWrap} ${selected ? styles.chromeMuted : ""}`}
       >
-        <div className={styles.helper}>Scroll · drag · arrow keys</div>
+        <div className={styles.helper}>
+          <span className={styles.helperDesktop}>Scroll · drag · arrow keys</span>
+          <span className={styles.helperMobile}>Swipe to explore</span>
+        </div>
       </div>
 
       {/* Detail modal */}

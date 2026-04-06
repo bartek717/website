@@ -244,6 +244,50 @@
   backdrop-filter: blur(16px);
 }
 
+/* ── Swipe indicators (mobile only) ── */
+.swipeHints {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 0.6rem;
+  transition:
+    opacity 220ms ease,
+    filter 220ms ease;
+}
+
+.swipeArrow {
+  font-size: 1.6rem;
+  color: var(--muted);
+  opacity: 0.45;
+  animation: swipePulse 2s ease-in-out infinite;
+}
+
+.swipeArrow:last-child {
+  animation-delay: 1s;
+}
+
+@keyframes swipePulse {
+  0%, 100% { opacity: 0.25; transform: translateX(0); }
+  50% { opacity: 0.55; transform: translateX(var(--swipe-dir, 3px)); }
+}
+
+.swipeArrow:first-child {
+  --swipe-dir: -3px;
+}
+
+.swipeArrow:last-child {
+  --swipe-dir: 3px;
+}
+
+/* Helper text variants */
+.helperMobile {
+  display: none;
+}
+
 /* ── Modal ── */
 .modalRoot {
   position: fixed;
@@ -472,8 +516,13 @@
   .nameplate,
   .helperWrap,
   .nameplateLink,
-  .rolodexCard {
+  .rolodexCard,
+  .swipeHints {
     transition: none;
+  }
+
+  .swipeArrow {
+    animation: none;
   }
 }
 
@@ -505,5 +554,17 @@
 
   .modalTitle {
     font-size: 1.5rem;
+  }
+
+  .swipeHints {
+    display: flex;
+  }
+
+  .helperDesktop {
+    display: none;
+  }
+
+  .helperMobile {
+    display: inline;
   }
 }
