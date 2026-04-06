@@ -230,8 +230,12 @@ export default function RolodexScene() {
 
   const handleClick = (idx: number, item: RolodexItem) => {
     if (suppressClick.current) return;
-    targetRef.current = idx;
-    openModal(item);
+    const isCentered = wrap(targetRef.current) === idx;
+    if (isCentered) {
+      openModal(item);
+    } else {
+      targetRef.current = idx;
+    }
   };
 
   // ── Render ───────────────────────────────────────────────────────
