@@ -8,7 +8,7 @@ import styles from "@/components/rolodex-scene.module.css";
 import personalData from "@/personal_data.json";
 
 const TOTAL = ROLEDEX_ITEMS.length;
-const SPREAD_X = 310; // px between card centers
+const SPREAD_X = 360; // px between card centers
 const LERP = 0.11;
 const WHEEL_STEP_THRESHOLD = 90;
 
