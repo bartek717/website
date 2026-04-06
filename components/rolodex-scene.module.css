@@ -125,10 +125,8 @@
 
 .cardImageDarkBg {
   mix-blend-mode: normal;
-}
-
-.cardImageFrameDarkBg {
-  background: #2a2a2a;
+  object-fit: cover;
+  padding: 0;
 }
 
 .cardBody {
@@ -366,10 +364,8 @@
 
 .modalImageDarkBg {
   mix-blend-mode: normal;
-}
-
-.modalMediaDarkBg {
-  background: #2a2a2a;
+  object-fit: cover;
+  padding: 0;
 }
 
 .modalBody {

@@ -271,7 +271,7 @@ export default function RolodexScene() {
               <div
                 className={`${styles.cardImageFrame} ${
                   usesContainedImage(item) ? styles.cardImageFrameContained : ""
-                } ${item.darkBg ? styles.cardImageFrameDarkBg : ""}`}
+                }`}
               >
                 <Image
                   src={item.src}
@@ -371,7 +371,7 @@ export default function RolodexScene() {
             <div
               className={`${styles.modalMedia} ${
                 usesContainedImage(selected) ? styles.modalMediaContained : ""
-              } ${selected.darkBg ? styles.modalMediaDarkBg : ""}`}
+              }`}
             >
               <Image
                 src={selected.src}

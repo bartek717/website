@@ -25,13 +25,11 @@ const SVG_PATHS = [
   "/rolodex/lime-echo.svg",
 ];
 
-const IMAGE_SCALE: Record<string, number> = {
-  talyth: 1.35,
-};
+const IMAGE_SCALE: Record<string, number> = {};
 
-const IMAGE_POSITION: Record<string, string> = {
-  talyth: "center center",
-};
+const IMAGE_POSITION: Record<string, string> = {};
+
+const DARK_BG_PROJECTS = ["talyth"];
 
 const projects: RolodexItem[] = personalData.projects.map((p, i) => ({
   id: `project-${p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
@@ -43,6 +41,7 @@ const projects: RolodexItem[] = personalData.projects.map((p, i) => ({
   meta: (p as any).year,
   imageScale: IMAGE_SCALE[p.title.toLowerCase()],
   imagePosition: IMAGE_POSITION[p.title.toLowerCase()],
+  darkBg: DARK_BG_PROJECTS.includes(p.title.toLowerCase()),
 }));
 
 const DARK_BG_COMPANIES = ["distributive"];
