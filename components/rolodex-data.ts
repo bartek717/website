@@ -9,6 +9,7 @@ export type RolodexItem = {
   tags?: string[];
   meta?: string;
   darkBg?: boolean;
+  imageScale?: number;
 };
 
 const SVG_PATHS = [
@@ -23,6 +24,10 @@ const SVG_PATHS = [
   "/rolodex/lime-echo.svg",
 ];
 
+const IMAGE_SCALE: Record<string, number> = {
+  talyth: 1.35,
+};
+
 const projects: RolodexItem[] = personalData.projects.map((p, i) => ({
   id: `project-${p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
   src: (p as any).image ?? SVG_PATHS[i % SVG_PATHS.length],
@@ -31,6 +36,7 @@ const projects: RolodexItem[] = personalData.projects.map((p, i) => ({
   href: (p as any).link,
   tags: (p as any).tags,
   meta: (p as any).year,
+  imageScale: IMAGE_SCALE[p.title.toLowerCase()],
 }));
 
 const DARK_BG_COMPANIES = ["distributive"];

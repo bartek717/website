@@ -273,6 +273,7 @@ export default function RolodexScene() {
                   src={item.src}
                   alt={item.title}
                   fill
+                  style={item.imageScale ? { transform: `scale(${item.imageScale})` } : undefined}
                   className={`${styles.cardImage} ${
                     usesContainedImage(item) ? styles.cardImageContained : ""
                   } ${item.darkBg ? styles.cardImageDarkBg : ""}`}
@@ -369,6 +370,7 @@ export default function RolodexScene() {
                 src={selected.src}
                 alt={selected.title}
                 fill
+                style={selected.imageScale ? { transform: `scale(${selected.imageScale})` } : undefined}
                 className={`${styles.modalImage} ${
                   usesContainedImage(selected) ? styles.modalImageContained : ""
                 } ${selected.darkBg ? styles.modalImageDarkBg : ""}`}
