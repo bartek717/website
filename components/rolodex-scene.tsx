@@ -284,7 +284,8 @@ export default function RolodexScene() {
                   className={`${styles.cardImage} ${
                     usesContainedImage(item) ? styles.cardImageContained : ""
                   } ${item.darkBg ? styles.cardImageDarkBg : ""}`}
-                  loading={idx === 0 ? "eager" : "lazy"}
+                  priority={idx < 3}
+                  loading={idx < 3 ? "eager" : "lazy"}
                   sizes="280px"
                 />
               </div>
