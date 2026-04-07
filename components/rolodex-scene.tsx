@@ -334,6 +334,15 @@ export default function RolodexScene() {
           >
             𝕏
           </a>
+          <a
+            href="https://github.com/bartek717"
+            className={styles.nameplateLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            GitHub
+          </a>
         </div>
       </div>
 
